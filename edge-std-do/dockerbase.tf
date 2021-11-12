@@ -4,7 +4,6 @@ variable "database_password" {
 
 variable "admin_password" {
     description = "This is the password you will use to log into ERPNext once it is installed."
-    sensitive = true
 }
 
 variable "domain" {
