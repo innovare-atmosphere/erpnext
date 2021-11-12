@@ -4,6 +4,7 @@ variable "database_password" {
 
 variable "admin_password" {
     description = "This is the password you will use to log into ERPNext once it is installed."
+    sensitive = true
 }
 
 variable "domain" {
@@ -11,7 +12,7 @@ variable "domain" {
 }
 
 variable "webmaster_email" {
-    default = ""
+    description = "This is the email for a technical person to receive SSL notifications."
 }
 
 resource "random_password" "database_password" {
@@ -26,7 +27,7 @@ resource "digitalocean_droplet" "www-erpnext" {
   image = "docker-20-04"
   name = "www-erpnext"
   region = "nyc3"
-  size = "s-1vcpu-1gb"
+  size = "s-2vcpu-4gb"
   ssh_keys = [
     digitalocean_ssh_key.terraform.id
   ]
@@ -44,6 +45,7 @@ resource "digitalocean_droplet" "www-erpnext" {
       "export PATH=$PATH:/usr/bin",
       # create erpnext installation directory
       "mkdir /root/erpnext",
+      "mkdir /root/erpnext/installation",
     ]
   }
 
@@ -53,9 +55,14 @@ resource "digitalocean_droplet" "www-erpnext" {
   }
 
   provisioner "file" {
+    source      = "frappe-mariadb.cnf.tpl"
+    destination = "/root/erpnext/installation/frappe-mariadb.cnf"
+  }
+
+  provisioner "file" {
     content      = templatefile("env-production.tpl", {
       admin_password = var.admin_password,
-      webmaster_email = var.webmaster_email != "" ? var.webmaster_email : "email@example.com",
+      webmaster_email = var.webmaster_email,
       server_name = var.domain != "" ? var.domain : "0.0.0.0",
       database_password = var.database_password != "" ? var.database_password : random_password.database_password.result
     })
@@ -70,6 +77,7 @@ resource "digitalocean_droplet" "www-erpnext" {
       "ufw allow http",
       "ufw allow https",
       "docker-compose up -d",
+      "docker logs erpnext_site-creator_1 -f"
     ]
   }
 }
