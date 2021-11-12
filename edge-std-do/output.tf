@@ -8,12 +8,13 @@ output "http_address" {
   value       = "http://${var.domain != "" ? var.domain : digitalocean_droplet.www-erpnext.ipv4_address}/"
 }
 
-output "admin_user" {
-  description = "Administrator username"
-  value       = "Administrator"
-}
-
 output "admin_password" {
   description = "Administrator password"
   value       = var.admin_password
+  sensitive = true
+}
+
+output "admin_user" {
+  description = "Administrator username"
+  value       = "Administrator"
 }
