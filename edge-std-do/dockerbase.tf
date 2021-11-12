@@ -2,6 +2,10 @@ variable "database_password" {
     default = ""
 }
 
+variable "admin_password" {
+    description = "This is the password you will use to log into ERPNext once it is installed."
+}
+
 variable "domain" {
     default = ""
 }
@@ -50,7 +54,7 @@ resource "digitalocean_droplet" "www-erpnext" {
 
   provisioner "file" {
     content      = templatefile("env-production.tpl", {
-      admin_password = var.admin_password != "" ? var.admin_password : "admin",
+      admin_password = var.admin_password,
       webmaster_email = var.webmaster_email != "" ? var.webmaster_email : "email@example.com",
       server_name = var.domain != "" ? var.domain : "0.0.0.0",
       database_password = var.database_password != "" ? var.database_password : random_password.database_password.result
