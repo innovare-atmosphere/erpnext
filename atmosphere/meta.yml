@@ -1,0 +1,9 @@
+name: erpnext-edge-docker
+description: Deploy edge docker image of ERPNext on a Digital Ocean droplet
+categories:
+- Finance
+- Supply Chain
+- Open Source
+- Administration
+- IT
+- Marketing
