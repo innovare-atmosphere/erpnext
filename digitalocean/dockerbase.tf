@@ -76,7 +76,7 @@ resource "digitalocean_droplet" "www-erpnext" {
       "cd /root/erpnext",
       "ufw allow http",
       "ufw allow https",
-      "docker-compose up -d",
+      "docker compose up -d",
       "docker logs erpnext_site-creator_1 -f"
     ]
   }
